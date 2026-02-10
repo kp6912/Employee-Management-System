@@ -256,15 +256,34 @@ const fetchEmployeeById = async (req,res)=>{
 
 const getEmployeeSummary = async (req, res) => {
   try {
-    const totalEmployees = await Employee.countDocuments();
+    // Get current user from auth middleware
+    const userId = req.user._id;
+    
+    // Find the employee record for this user
+    const employee = await Employee.findOne({ userId }).populate('department');
+    
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee record not found",
+      });
+    }
+
+    // Get leave count for this employee
+    const Leave = (await import('../models/Leave.js')).default;
+    const leaveCount = await Leave.countDocuments({ employeeId: employee._id });
+    
+    // Check profile completion
+    const profileComplete = (employee.dob && employee.gender && employee.designation) ? "Complete" : "Incomplete";
 
     res.status(200).json({
       success: true,
       summary: {
-        salary: 0,
-        leaves: 0,
-        profileComplete: "Yes",
-        totalEmployees,
+        salary: employee.salary || 0,
+        leaves: leaveCount,
+        profileComplete,
+        department: employee.department?.dep_name || "Not assigned",
+        employeeId: employee.employeeId
       },
     });
   } catch (error) {
@@ -281,4 +300,49 @@ const getEmployeeSummary = async (req, res) => {
 
 
 
-export {addEmployee, upload ,getEmployees,getEmployee,updateEmployee,fetchEmployeeById,getEmployeeSummary}
+// Get salary and leave summary for specific employee (admin use)
+const getEmployeeSalaryLeaves = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Find employee by ID
+    const employee = await Employee.findById(id)
+      .populate('userId', 'name email')
+      .populate('department', 'dep_name');
+    
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    // Get leave count for this employee
+    const Leave = (await import('../models/Leave.js')).default;
+    const leaveCount = await Leave.countDocuments({ employeeId: employee._id });
+    
+    // Check profile completion
+    const profileComplete = (employee.dob && employee.gender && employee.designation) ? "Complete" : "Incomplete";
+
+    res.status(200).json({
+      success: true,
+      summary: {
+        salary: employee.salary || 0,
+        leaves: leaveCount,
+        profileComplete,
+        department: employee.department?.dep_name || "Not assigned",
+        employeeId: employee.employeeId,
+        name: employee.userId?.name || "Unknown",
+        email: employee.userId?.email || "Unknown"
+      },
+    });
+  } catch (error) {
+    console.error("EMPLOYEE SALARY LEAVES FETCH ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: "Summary fetch failed",
+    });
+  }
+};
+
+export {addEmployee, upload ,getEmployees,getEmployee,updateEmployee,fetchEmployeeById,getEmployeeSummary,getEmployeeSalaryLeaves}

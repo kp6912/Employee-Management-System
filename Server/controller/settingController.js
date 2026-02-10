@@ -3,7 +3,7 @@ import User from "../models/user.js";
 
 export const changePassword = async (req, res) => {
   try {
-    const userId = req.user.id; // from JWT
+    const userId = req.user._id; // from JWT
     const { oldPassword, newPassword } = req.body;
 
     if (!oldPassword || !newPassword) {

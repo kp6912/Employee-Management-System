@@ -19,8 +19,6 @@ const Table = () => {
         );
 
         if (response.data.success) {
-      let sno = 1;
-
       const data = response.data.leaves.map((leave, index) => ({
   sno: index + 1,
   _id: leave._id,
@@ -29,8 +27,7 @@ const Table = () => {
   department: leave.employeeId?.department?.dep_name || "N/A",
   leaveType: leave.leaveType,
   days:
-    new Date(leave.endDate).getDate() -
-    new Date(leave.startDate).getDate() + 1,
+    Math.ceil((new Date(leave.endDate) - new Date(leave.startDate)) / (1000 * 60 * 60 * 24)) + 1,
   status: leave.status,
   action: <LeaveButtons _id={leave._id} />,
 }));
@@ -47,8 +44,6 @@ const Table = () => {
 
   useEffect(()=>{
     fetchLeaves()
-
-
   },[]);
   return (
     <>{leaves ? (

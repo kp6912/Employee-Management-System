@@ -5,19 +5,28 @@ import Leave from "../models/Leave.js";
 ================================= */
 const addLeave = async (req, res) => {
   try {
-    const { userId, leaveType, startDate, endDate, reason } = req.body;
+    const { employeeId, leaveType, startDate, endDate, reason } = req.body;
 
-    // Validate required fields
-    if (!userId || !leaveType || !startDate || !endDate || !reason) {
+    if (!employeeId || !leaveType || !startDate || !endDate || !reason) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    // Check for overlapping leave
+    // Find the Employee document that corresponds to the User ID
+    const Employee = (await import('../models/Employee.js')).default;
+    const employee = await Employee.findOne({ userId: employeeId });
+    
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee record not found",
+      });
+    }
+
     const overlappingLeave = await Leave.findOne({
-      userId: userId,
+      employeeId: employee._id,
       $or: [
         { startDate: { $lte: new Date(endDate), $gte: new Date(startDate) } },
         { endDate: { $lte: new Date(endDate), $gte: new Date(startDate) } },
@@ -31,14 +40,13 @@ const addLeave = async (req, res) => {
       });
     }
 
-    // Create leave
     const leave = await Leave.create({
-      userId,
+      employeeId: employee._id, // Use Employee ObjectId instead of User ID
       leaveType,
       startDate,
       endDate,
       reason,
-      status: "Pending", // default status
+      status: "Pending",
     });
 
     return res.status(201).json({
@@ -55,12 +63,14 @@ const addLeave = async (req, res) => {
   }
 };
 
+
+
 /* ===============================
    Get All Leaves for an Employee
 ================================= */
 const getLeave = async (req, res) => {
   try {
-    const { id } = req.params; // employee userId
+    const { id } = req.params; // Can be either userId or employeeId
 
     if (!id) {
       return res.status(400).json({
@@ -69,7 +79,23 @@ const getLeave = async (req, res) => {
       });
     }
 
-    const leaves = await Leave.find({ employeeId: id }).sort({ createdAt: -1 });
+    // Find the Employee document - try by userId first, then by Employee _id
+    const Employee = (await import('../models/Employee.js')).default;
+    let employee = await Employee.findOne({ userId: id });
+    
+    // If not found by userId, try finding by Employee's own _id (for admin access)
+    if (!employee) {
+      employee = await Employee.findById(id);
+    }
+    
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee record not found",
+      });
+    }
+
+    const leaves = await Leave.find({ employeeId: employee._id }).sort({ createdAt: -1 });
 
 
     return res.status(200).json({

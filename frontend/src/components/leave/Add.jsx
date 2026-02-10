@@ -28,7 +28,7 @@ const Add = () => {
     const response = await axios.post(
       "http://localhost:5000/api/leave/add",
       {
-        userId: user._id,         // Send the logged-in employee ID
+        employeeId: user._id,         // Send the logged-in employee ID
         leaveType: formData.leaveType,
         startDate: formData.startDate,
         endDate: formData.endDate,

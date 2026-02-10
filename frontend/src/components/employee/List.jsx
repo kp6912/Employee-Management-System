@@ -32,9 +32,9 @@ const List = () => {
             email: emp.userId?.email || "N/A",
             employeeId: emp.employeeId,
             department: emp.department?.dep_name || "N/A",
-            profileImage: emp.userId?.profilImage ? (
+            profileImage: emp.userId?.profileImage ? (
               <img
-                src={`http://localhost:5000/${emp.userId.profilImage}`}
+                src={`http://localhost:5000/${emp.userId.profileImage}`}
                 alt="profile"
                 className="w-10 h-10 rounded-full object-cover"
               />

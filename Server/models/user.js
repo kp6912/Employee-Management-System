@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    name :{type:String , require:true},
-    email :{type:String , require:true},
-    password :{type:String , require:true},
-    role : {type:String, enum:["admin","employee"],require:true},
+    name :{type:String , required:true},
+    email :{type:String , required:true},
+    password :{type:String , required:true},
+    role : {type:String, enum:["admin","employee"],required:true},
     profileImage : {type:String,},
-    creatAt : {type:Date,default:Date.now},
-    updateAt : {type:Date,default:Date.now}
+    createdAt : {type:Date,default:Date.now},
+    updatedAt : {type:Date,default:Date.now}
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);

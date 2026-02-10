@@ -51,24 +51,36 @@ const Setting = () => {
     );
 
     if (response.data.success) {
-      navigate("/admin-dashboard/employees");
+      setSuccess("Password updated successfully!");
+      // Clear form
+      setSetting({
+        userId: user._id || "",
+        oldPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+      // Navigate based on user role
+      setTimeout(() => {
+        if (user.role === "admin") {
+          navigate("/admin-dashboard");
+        } else {
+          navigate("/employee-dashboard");
+        }
+      }, 1500);
     }
   } catch (error) {
-    
-    {
-      setError(error.response?.data?.error || "Password update failed");
-    }
+    setError(error.response?.data?.error || "Password update failed");
   }
 };
 
 
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow rounded">
-      <h2 className="text-xl font-semibold mb-4">Change Password</h2>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-gray-800 shadow-xl rounded-xl">
+      <h2 className="text-xl font-semibold mb-4 text-white">Change Password</h2>
 
-      {error && <p className="text-red-500 mb-2">{error}</p>}
-      {success && <p className="text-green-600 mb-2">{success}</p>}
+      {error && <p className="text-red-400 mb-2">{error}</p>}
+      {success && <p className="text-green-400 mb-2">{success}</p>}
 
       <form onSubmit={handleSubmit}>
         <input
@@ -77,7 +89,7 @@ const Setting = () => {
           placeholder="Old Password"
           value={setting.oldPassword}
           onChange={handleChange}
-          className="w-full p-2 mb-3 border rounded"
+          className="w-full p-2 mb-3 bg-gray-700 text-white border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
 
@@ -87,7 +99,7 @@ const Setting = () => {
           placeholder="New Password"
           value={setting.newPassword}
           onChange={handleChange}
-          className="w-full p-2 mb-3 border rounded"
+          className="w-full p-2 mb-3 bg-gray-700 text-white border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
 
@@ -97,7 +109,7 @@ const Setting = () => {
           placeholder="Confirm Password"
           value={setting.confirmPassword}
           onChange={handleChange}
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full p-2 mb-4 bg-gray-700 text-white border border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
 

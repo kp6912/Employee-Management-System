@@ -20,7 +20,7 @@ export const columns =[
     },
     {
         name : "Department",
-        selector : (row)=>row.dep_name,
+        selector : (row)=>row.department,
         width : "130px"
 
     },
@@ -68,7 +68,7 @@ export const fetchEmployees = async (id) =>{
 let employees;
             
             try {
-                const response = await axios.get(`http://localhost:5000/api/employee/department/:${id}`,{
+                const response = await axios.get(`http://localhost:5000/api/employee/department/${id}`,{
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
@@ -91,7 +91,7 @@ let employees;
             
         }        
 
-const EmplyoeeButtons = ({_id }) => {
+const EmployeeButtons = ({_id }) => {
   const navigate = useNavigate();
 
   return (
@@ -139,7 +139,7 @@ const EmplyoeeButtons = ({_id }) => {
   );
 };
 
-export default EmplyoeeButtons;
+export default EmployeeButtons;
 
         
         

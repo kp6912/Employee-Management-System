@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import EmployeeDashboard from "./pages/EmployeeDashboard.jsx";
+import Unauthorized from "./pages/Unauthorized.jsx";
 
 import PrivateRoutes from "./utiles/privateRoutes.jsx";
 import RoleBaseRoutes from "./utiles/RoleBaseRoutes.jsx";
@@ -31,6 +32,7 @@ function App() {
         {/* Default */}
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/unauthorize" element={<Unauthorized />} />
 
         {/* ADMIN ROUTES */}
         <Route
@@ -55,8 +57,8 @@ function App() {
           <Route path="employees/salary/:id" element={<ViewSalary />} />
           <Route path="leaves" element={<Table />} />
           <Route path="leaves/:id" element={<Detail />} />
-          <Route path="/admin-dashboard/employees/leaves/:id" element={<LeaveList />} />
-          <Route path="/admin-dashboard/setting" element={<Setting />} />
+          <Route path="employees/leaves/:id" element={<LeaveList />} />
+          <Route path="setting" element={<Setting />} />
         </Route>
 
         {/* EMPLOYEE ROUTES */}
@@ -77,7 +79,7 @@ function App() {
           <Route path="profile/:id" element={<View />} />
           <Route path="leaves" element={<LeaveList />} />
           <Route path="add-leave" element={<AddLeave />} />
-          <Route path="salary/:id" element={<ViewSalary />} />
+          <Route path="salary" element={<ViewSalary />} />
           <Route path="setting" element={<Setting />} />
 
         </Route>

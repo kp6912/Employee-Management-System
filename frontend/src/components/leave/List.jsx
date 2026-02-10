@@ -6,14 +6,17 @@ import { useParams } from "react-router-dom";
 
 
 const List = () => {
-  const { empId } = useParams();
+  const { id: empId } = useParams(); // Route uses :id parameter
   const { user } = useAuth();
   const [leaves, setLeaves] = useState([]);
   const [search, setSearch] = useState("");
-  const id = user.role === "admin"?user._id:empId;
+  
+  const id = user && (user.role === "admin" ? empId : user._id);
 
   // Fetch leaves for the logged-in user
   const fetchLeaves = async () => {
+    if(!id) return;
+    
     try {
       const res = await axios.get(
         `http://localhost:5000/api/leave/user/${id}`,
@@ -27,12 +30,15 @@ const List = () => {
       }
     } catch (error) {
       console.error("FETCH LEAVES ERROR:", error);
+      if (error.response) {
+        console.error('Error response:', error.response.data);
+      }
     }
   };
 
   useEffect(() => {
     fetchLeaves();
-  }, []);
+  }, [id]);
 
   // Filter leaves by search
   const filteredLeaves = leaves.filter((leave) =>
@@ -42,13 +48,25 @@ const List = () => {
   return (
     <div>
       <div className="mb-6 flex justify-between items-center">
-        <h3 className="text-2xl font-bold text-white">Manage Leaves</h3>
-        <Link
-          to="/employee-dashboard/add-leave"
-          className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-        >
-          + Add New Leave
-        </Link>
+        <h3 className="text-2xl font-bold text-white">
+          {user?.role === "admin" ? "Employee Leaves" : "My Leaves"}
+        </h3>
+        {user?.role !== "admin" && (
+          <Link
+            to="/employee-dashboard/add-leave"
+            className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+          >
+            + Add New Leave
+          </Link>
+        )}
+        {user?.role === "admin" && (
+          <Link
+            to="/admin-dashboard/employees"
+            className="px-5 py-2 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition"
+          >
+            Back to Employees
+          </Link>
+        )}
       </div>
 
       <div className="mb-6">

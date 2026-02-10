@@ -7,7 +7,8 @@ import {
   getEmployee,
   updateEmployee,
   fetchEmployeeById,
-  getEmployeeSummary
+  getEmployeeSummary,
+  getEmployeeSalaryLeaves
 } from "../controller/employeeController.js";
 
 const router = express.Router();
@@ -22,6 +23,7 @@ router.post(
 router.get("/", authMiddleware, getEmployees);
 
 router.get("/summary", authMiddleware, getEmployeeSummary);
+router.get("/salary-leaves/:id", authMiddleware, getEmployeeSalaryLeaves);
 router.get("/department/:id", authMiddleware, fetchEmployeeById);
 
 router.get("/:id", authMiddleware, getEmployee);

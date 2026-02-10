@@ -10,7 +10,7 @@ const RoleBaseRoutes = ({ children, requiredRole }) => {
   }
 
   // User exists but role is not authorized
-  if (!requiredRole.includes(user?.role)) {
+  if (user?.role !== requiredRole) {
     return <Navigate to="/unauthorize" />; // ⚠ Must return!
   }
 

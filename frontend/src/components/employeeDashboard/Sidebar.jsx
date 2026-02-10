@@ -42,7 +42,7 @@ const Sidebar = () => {
           <span>My Profile</span>
         </NavLink>
 
-        <NavLink to={`/employee-dashboard/salary/${user._id}`} className={linkClass}>
+        <NavLink to="/employee-dashboard/salary" className={linkClass}>
           <FaMoneyBillWave />
           <span>My Salary</span>
         </NavLink>
